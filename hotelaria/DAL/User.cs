@@ -9,11 +9,11 @@ namespace hotelaria.DAL
         int id;
         string nome;
         string senha;
-        int status;
+        string status;
 
         public int Id { get => id; set => id = value; }
         public string Nome { get => nome; set => nome = value; }
         public string Senha { get => senha; set => senha = value; }
-        public int Status { get => status; set => status = value; }
+        public string Status { get => status; set => status = value; }
     }
 }

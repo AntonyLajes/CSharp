@@ -19,10 +19,11 @@ namespace hotelaria.DAL
 
         public User validarLogin(String usuario, String senha)
         {
-            String query = "SELECT id,nome,status FROM users WHERE nome=@user AND senha = @password";
+            String query = "SELECT id,nome,status FROM users WHERE nome=@user AND senha = @password AND status=@status";
             cmd.CommandText = query;
             cmd.Parameters.AddWithValue("@user", usuario);
             cmd.Parameters.AddWithValue("@password", senha);
+            cmd.Parameters.AddWithValue("@status", "Ativo");
 
             try
             {
@@ -34,7 +35,7 @@ namespace hotelaria.DAL
                     {
                         dadosUsers.Id     = dr.GetInt32(0);
                         dadosUsers.Nome   = dr.GetString(1);
-                        dadosUsers.Status = dr.GetInt32(2);
+                        dadosUsers.Status = dr.GetString(2);
                     }
                     //Console.WriteLine("LoginDaoComandos: validarLogin: dr.HasRows = {0}", dr.HasRows);
                     return dadosUsers; //true
@@ -58,6 +59,7 @@ namespace hotelaria.DAL
             try
             {
                 cmd.Connection = con.conectar();
+                dt.Clear();
                 da.Fill(dt);
                
                 con.desconectar();
@@ -71,10 +73,35 @@ namespace hotelaria.DAL
 
         public bool InserirUser(User dados)
         {
-            String query = "INSERT INTO users (nome,senha) VALUES (@nome,@senha)";
+            String query = "INSERT INTO users (nome,senha,status) VALUES (@nome,@senha,@status)";
             cmd.CommandText = query;
+            cmd.Parameters.Clear();
             cmd.Parameters.AddWithValue("@nome", dados.Nome);
             cmd.Parameters.AddWithValue("@senha", dados.Senha);
+            cmd.Parameters.AddWithValue("@status", dados.Status);
+
+            try
+            {
+                cmd.Connection = con.conectar();
+                cmd.ExecuteNonQuery(); // executa ao cmd SQL
+                con.desconectar();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+        public bool AtualizarDadosUser(User dados)
+        {
+            //String query = "UPDATE users SET nome=@nomedAtualizar, senha=@senhadAtualizar, status=@status WHERE id=@idAtualizar";
+            String query = "UPDATE users SET nome=@nomedAtualizar, status=@status WHERE id=@idAtualizar";
+            cmd.Parameters.Clear();
+            cmd.CommandText = query;
+            cmd.Parameters.AddWithValue("@nomedAtualizar", dados.Nome);
+            //cmd.Parameters.AddWithValue("@senhadAtualizar", dados.Senha);
+            cmd.Parameters.AddWithValue("@idAtualizar", dados.Id);
+            cmd.Parameters.AddWithValue("@status", dados.Status);
 
             try
             {
@@ -89,6 +116,25 @@ namespace hotelaria.DAL
             return true;
         }
 
+        public bool InativarUser(User dados)
+        {
+            String query = "UPDATE users SET status=0 WHERE id=@codigo";
+            cmd.Parameters.Clear();
+            cmd.CommandText = query;
+            cmd.Parameters.AddWithValue("@codigo", dados.Id);
+
+            try
+            {
+                cmd.Connection = con.conectar();
+                cmd.ExecuteNonQuery(); // executa ao cmd SQL
+                con.desconectar();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
 
 
     }
