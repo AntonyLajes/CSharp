@@ -32,6 +32,17 @@ namespace hotelaria.Control
         public bool SalvarNovoUser(User dados)
         {
             return loginDao.InserirUser(dados);
-        }        
+        }
+
+        public bool SalvarEdicaoUser(User dados)
+        {
+            return loginDao.AtualizarDadosUser(dados);
+        }
+
+        public bool InativarUser(User dados)
+        {
+            return loginDao.InativarUser(dados);
+        }
+
     }
 }
